@@ -1,0 +1,7 @@
+= Polls 
+
+Allows users to add polls to their radiant website. To copy the extension's javascript and stylesheets to your Radiant root's public directories, run <tt>rake radiant:extensions:polls:update</tt>.
+
+Usage:
+
+<tt><r:active_poll /></tt>

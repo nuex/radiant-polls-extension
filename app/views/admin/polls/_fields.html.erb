@@ -1,0 +1,6 @@
+  Title: <%= f.text_field :title %><br/>
+  <h3 id="options-title">Options:</h3>
+  <div id="options">
+    <%= render :partial => 'option', :collection => @poll.options %>
+  </div>
+  <p><%= link_to_function("Add Poll Option", "add_option('options');") %></p>

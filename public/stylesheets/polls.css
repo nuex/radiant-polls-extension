@@ -1,0 +1,9 @@
+.results {
+  font-size: .7em;
+  margin-left: 4em;
+}
+
+.results table td {
+  border-top: none;
+  padding: 0;
+}
