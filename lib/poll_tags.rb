@@ -1,4 +1,4 @@
-module PollsTags
+module PollTags
   include Radiant::Taggable
 
   class TagError < StandardError; end
@@ -13,6 +13,32 @@ module PollsTags
     options = tag.attr.dup
     tag.locals.poll = find_poll(tag, options)
     tag.expand
+  end
+
+  desc %{
+    Expands inner tags if the poll has not been submitted yet.
+
+    *Usage:*
+    <pre><code><r:poll:unless_submitted title="My Poll">...</r:poll:unless_submitted></code></pre>
+
+  }
+  tag 'poll:unless_submitted' do |tag|
+    options = tag.attr.dup
+    poll = tag.locals.poll = find_poll(tag, options)
+    tag.expand unless tag.locals.page.submitted_polls && tag.locals.page.submitted_polls.include?(poll.id)
+  end
+
+  desc %{
+    Expands inner tags if the poll has been submitted.
+
+    *Usage:*
+    <pre><code><r:poll:unless_submitted title="My Poll">...</r:poll:unless_submitted></code></pre>
+
+  }
+  tag 'poll:if_submitted' do |tag|
+    options = tag.attr.dup
+    poll = tag.locals.poll = find_poll(tag, options)
+    tag.expand if tag.locals.page.submitted_polls && tag.locals.page.submitted_polls.include?(poll.id)
   end
 
   desc %{
@@ -36,10 +62,18 @@ module PollsTags
     tag.locals.poll = find_poll(tag, options)
     poll = tag.locals.poll
     result = %Q{
-      <form action="/polls/#{poll.id}" method="post" id="poll_form">
+      <form action="/pages/#{tag.locals.page.id}/poll_response" method="post" id="poll_form">
         #{tag.expand}
+        <input type="hidden" name="poll_id" value="#{tag.locals.poll.id}" />
       </form>
     }
+  end
+
+  desc %{
+    A container for options.
+  }
+  tag 'poll:options' do |tag|
+    tag.expand
   end
 
   desc %{
@@ -129,9 +163,8 @@ module PollsTags
   private
 
   def find_poll(tag, options)
-    raise TagError, "'title' attribute required" unless title = options.delete('title') or id = options.delete('id') or tag.locals.asset
+    raise TagError, "'title' attribute required" unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
     tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
   end
-
   
 end

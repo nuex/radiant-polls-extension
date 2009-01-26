@@ -1,5 +1,5 @@
 class Poll < ActiveRecord::Base
-  has_many :save_options
+  has_many :options
   after_update :save_options
   validates_presence_of :title
   validates_associated :options
@@ -8,7 +8,7 @@ class Poll < ActiveRecord::Base
   def option_attributes=(option_attributes)
     option_attributes.each do |attributes|
       if attributes[:id].blank?
-        attributes[:times_selected] = 0
+        attributes[:response_count] = 0
         options.build(attributes)
       else
         option = options.detect { |a| a.id == attributes[:id].to_i }
@@ -20,10 +20,10 @@ class Poll < ActiveRecord::Base
   # submit a response to the poll and update
   # the response counts for the poll and the option
   def submit_response(option)
-    option_response_count = option.response_count
-    option.update_attribute(:response_count, option_response_count + 1) 
-    response_count = self.response_count
-    self.update_attribute(:response_count, response_count + 1)
+    option.update_attribute(:response_count, option.response_count + 1) 
+    self.update_attribute(:response_count, self.response_count + 1)
+
+    return true
   end
 
   # clear the number of the responses for the poll

@@ -4,6 +4,7 @@ class CreateOptions < ActiveRecord::Migration
       t.integer :poll_id
       t.string :title
       t.integer :response_count, :integer
+      t.integer :should_destroy
     end
   end
 

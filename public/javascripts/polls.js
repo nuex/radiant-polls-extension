@@ -1,31 +1,31 @@
 // poll javascript
 
-// add an answer field
+// add an option field
   
-function add_answer(container_id){
+function add_option(container_id){
   var container = $(container_id);
-  var template = new Template('<p class="answer" id="answer_#{id}"><input type="text" name="poll[answer_attributes][][title]" /> <a href="#" onclick="Element.remove(\'answer_#{id}\')">Cancel</a></p>');
+  var template = new Template('<p class="option" id="option_#{id}"><input type="text" name="poll[option_attributes][][title]" /> <a href="#" onclick="Element.remove(\'option_#{id}\')">Cancel</a></p>');
   new Insertion.Bottom(container, template.evaluate({id: Math.round(Math.random() * 100000)}));
 }
 
 
-// delete an answer 
+// delete an option 
 
-function delete_answer(id, container_id){  
-  if(confirm("Really delete this answer?")){
+function delete_option(id, container_id){  
+  if(confirm("Really delete this option?")){
     var container = $(container_id);
 
-    // mark answer for deletion
-    $("answer_"+id).down('.should_destroy').value = 1
+    // mark option for deletion
+    $("option_"+id).down('.should_destroy').value = 1
 
     // hide the field
-    Element.hide("answer_"+id);
+    Element.hide("option_"+id);
 
     // don't redisplay the deletion notice if its already there
-    if(typeof $('answers').previous("#answers-deleted") == 'undefined')
+    if(typeof $('options').previous("#options-deleted") == 'undefined')
     {
-      new Insertion.After('answers-title', '<p class="answer" id="answers-deleted">Removed answers will be deleted when you Save this poll.</p>');
+      new Insertion.After('options-title', '<p class="option" id="options-deleted">Removed options will be deleted when you Save this poll.</p>');
     }
-    new Effect.Highlight('answers-deleted');
+    new Effect.Highlight('options-deleted');
   }
 }

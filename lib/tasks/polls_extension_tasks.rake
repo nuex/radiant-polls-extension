@@ -1,8 +1,8 @@
 namespace :radiant do
   namespace :extensions do
     namespace :polls do
-      
-      desc "Runs the migration of the Page Attachments extension"
+
+      desc "Runs the migration of the Assets extension"
       task :migrate => :environment do
         require 'radiant/extension_migrator'
         if ENV["VERSION"]
@@ -11,11 +11,20 @@ namespace :radiant do
           PollsExtension.migrator.migrate
         end
       end
-    
+      
+      desc "Copies public assets of the Assets to the instance public/ directory."
       task :update => :environment do
-        FileUtils.cp PollsExtension.root + "/public/stylesheets/polls.css", RAILS_ROOT + "/public/stylesheets/admin"
-        FileUtils.cp PollsExtension.root + "/public/javascripts/polls.js", RAILS_ROOT + "/public/javascripts"
+        is_svn_or_dir = proc {|path| path =~ /\.svn/ || File.directory?(path) }
+        Dir[PollsExtension.root + "/public/**/*"].reject(&is_svn_or_dir).each do |file|
+          path = file.sub(PollsExtension.root, '')
+          directory = File.dirname(path)
+          puts "Copying #{path}..."
+          mkdir_p RAILS_ROOT + directory
+          cp file, RAILS_ROOT + path
+        end
+        
       end
+      
     end
   end
 end

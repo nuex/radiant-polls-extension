@@ -1,16 +1,20 @@
 class PollsExtension < Radiant::Extension
   version "0.2"
-  description "Allows you to add polls to your radiant site."
+  description "Radiant gets polls."
   url "http://github.com/nuex/radiant-polls-extension"
   
   define_routes do |map|
-    map.connect 'poll/:action', :controller => 'poll'
-    map.connect 'admin/polls/:action', :controller => 'admin/polls'
+    map.resources :poll_response, :path_prefix => "/pages/:page_id", :controller => "poll_response"
+    map.resources [:admin,:polls]
   end
   
   def activate
     admin.tabs.add "Polls", "/admin/polls", :after => "Layouts", :visibility => [:all]
+    SiteController.class_eval{
+      session :disabled => false
+    }
     Page.send :include, PollTags
+    Page.send :include, PollProcess
   end
   
   def deactivate
