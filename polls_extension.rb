@@ -15,6 +15,7 @@ class PollsExtension < Radiant::Extension
     }
     Page.send :include, PollTags
     Page.send :include, PollProcess
+    ResponseCache.defaults[:perform_caching] = false
   end
   
   def deactivate
