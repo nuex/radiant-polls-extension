@@ -6,17 +6,13 @@ Web polls for Radiant CMS.
 
 Via Git Submodules:
 
-<tt>
-  git submodule add git://github.com/nuex/radiant-polls-extension.git vendor/extensions/polls
-  rake radiant:extensions:polls:migrate
-  rake radiant:extensions:polls:update
-</tt>
+git submodule add git://github.com/nuex/radiant-polls-extension.git vendor/extensions/polls
+rake radiant:extensions:polls:migrate
+rake radiant:extensions:polls:update
 
 == Usage
 
-<tt>
 <r:poll title="My Poll">
-
   <r:unless_submitted>
     <r:form>
       <table>
@@ -42,6 +38,4 @@ Via Git Submodules:
       </r:options:each>
     </table>
   </r:if_submitted>
-
 </r:poll>
-</tt>
