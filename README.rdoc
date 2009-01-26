@@ -1,0 +1,47 @@
+= Polls Extension
+
+Web polls for Radiant CMS.
+
+== Installation
+
+Via Git Submodules:
+
+<tt>
+  git submodule add git://github.com/nuex/radiant-polls-extension.git vendor/extensions/polls
+  rake radiant:extensions:polls:migrate
+  rake radiant:extensions:polls:update
+</tt>
+
+== Usage
+
+<tt>
+<r:poll title="My Poll">
+
+  <r:unless_submitted>
+    <r:form>
+      <table>
+        <r:options:each>
+          <tr><r:input /> <r:title /></tr>
+        </r:options:each>
+      </table>
+      <r:submit />
+    </r:form>
+  </r:unless_submitted>
+
+  <r:if_submitted>
+    <table>
+      <tr>
+        <th>Answer</th>
+        <th>Result</th>
+      </tr>
+      <r:options:each>
+        <tr>
+          <td><r:title /></td>
+          <td><r:number_responses /> (<r:percent_responses />)</td>
+        </tr>
+      </r:options:each>
+    </table>
+  </r:if_submitted>
+
+</r:poll>
+</tt>
