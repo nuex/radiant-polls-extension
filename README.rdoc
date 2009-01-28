@@ -15,11 +15,9 @@ Via Git Submodules:
   <r:poll title="My Poll">
     <r:unless_submitted>
       <r:form>
-        <table>
-          <r:options:each>
-            <tr><r:input /> <r:title /></tr>
-          </r:options:each>
-        </table>
+        <r:options:each>
+          <p><r:input /> <r:title /></p>
+        </r:options:each>
         <r:submit />
       </r:form>
     </r:unless_submitted>
