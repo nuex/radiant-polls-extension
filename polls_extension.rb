@@ -9,6 +9,8 @@ class PollsExtension < Radiant::Extension
   end
   
   def activate
+    # now required (added 090216 by tbbooher)
+    require_dependency 'application'
     admin.tabs.add 'Polls', '/admin/polls', :after => 'Layouts', :visibility => [:all]
     SiteController.class_eval{
       session :disabled => false
