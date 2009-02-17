@@ -1,5 +1,5 @@
 class PollsExtension < Radiant::Extension
-  version '0.2'
+  version '0.2.1'
   description 'Radiant gets polls.'
   url 'http://github.com/nuex/radiant-polls-extension'
   
@@ -9,7 +9,6 @@ class PollsExtension < Radiant::Extension
   end
   
   def activate
-    # now required (added 090216 by tbbooher)
     require_dependency 'application'
     admin.tabs.add 'Polls', '/admin/polls', :after => 'Layouts', :visibility => [:all]
     SiteController.class_eval{
