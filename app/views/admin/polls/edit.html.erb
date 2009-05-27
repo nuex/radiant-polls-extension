@@ -1,8 +1,8 @@
 <% include_javascript 'polls' %>
 <h1>Edit Poll</h1>
 
-<% form_for :poll, @poll, :url => {:action => :update, :id => @poll.id } do |f| -%>
+<% form_for [ :admin, @poll ] do |f| -%>
   <%= render :partial => 'fields', :locals => { :f => f } %>
   <%= submit_tag 'Save' %>
-  <%= link_to 'Cancel', :action => :index %>
+  <%= link_to 'Cancel', admin_polls_url %>
 <% end -%>

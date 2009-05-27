@@ -29,14 +29,14 @@
         <td>
           <%# Don't display Clear Responses link if there aren't any responses to clear -%>
           <% unless poll.options.find(:all, :conditions => ["response_count >= 1"]).empty? %>
-            <%= link_to('Clear Responses', {:action => :clear_responses, :id => poll.id}, :confirm => "Really clear poll responses?") %>
+            <%= link_to('Clear Responses', clear_responses_admin_poll_url(poll), :method => :post, :confirm => "Really clear poll responses?") %>
           <% end %>
         </td>
         <td>
-          <%= link_to('Edit', :action => :edit, :id => poll) %>
+          <%= link_to('Edit', edit_admin_poll_url(poll)) %>
         </td>
         <td>
-          <%= link_to "Remove", {:action => :destroy, :id => poll}, :confirm => "Really delete this poll?", :class => :remove %>
+          <%= link_to('Remove', admin_poll_url(poll), :method => :delete, :confirm => "Really delete this poll?", :class => :remove) %>
         </td>
       </tr>
       <% if poll.response_count != 0 %>
@@ -62,4 +62,4 @@
 <% end -%>
 
 <br/><br/>
-<%= link_to "Create Poll", :action => :new %>
+<%= link_to('Create Poll', new_admin_poll_url) %>

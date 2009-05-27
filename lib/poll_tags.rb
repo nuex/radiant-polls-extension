@@ -11,6 +11,7 @@ module PollTags
   }
   tag 'poll' do |tag|
     options = tag.attr.dup
+    tag.locals.page.cache = false
     tag.locals.poll = find_poll(tag, options)
     tag.expand
   end
