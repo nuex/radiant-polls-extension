@@ -1,3 +1,30 @@
+#content #polls.index {
+  border: none;
+  border-collapse: collapse;
+}
+#content #polls.index .responses {
+  padding-right: 2em;
+  text-align: right;
+}
+#content #polls.index th.modify {
+  text-align: center;
+}
+#content #polls.index .node .poll,
+#content #polls.index .node .responses {
+  font-size: 115%;
+  font-weight: bold;
+}
+#content #polls.index .node .responses .none {
+  color: #666;
+}
+#content #polls.index .node .poll a,
+#content #polls.index .node .poll a:visited,
+#content #polls.index .node .responses a,
+#content #polls.index .node .responses a:visited {
+  color: black;
+  text-decoration: none;
+}
+
 form.new_poll label, form.edit_poll label {
   float: left;
   font-size: 130%;
