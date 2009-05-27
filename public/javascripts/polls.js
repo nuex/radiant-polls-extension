@@ -4,8 +4,8 @@
   
 function add_option(container_id){
   var container = $(container_id);
-  var template = new Template('<p class="option" id="option_#{id}"><input type="text" name="poll[option_attributes][][title]" /> <a href="#" onclick="Element.remove(\'option_#{id}\')">Cancel</a></p>');
-  new Insertion.Bottom(container, template.evaluate({id: Math.round(Math.random() * 100000)}));
+  var template = new Template('<p class="option" id="option_#{id}"><input type="text" name="poll[option_attributes][][title]" size="30" /> <a href="#" onclick="Element.remove(\'option_#{id}\')">Cancel</a></p>');
+  new Insertion.Bottom(container, template.evaluate({id: new Date().getTime()}));
 }
 
 

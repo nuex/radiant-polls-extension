@@ -3,12 +3,27 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe 'Poll Tags' do
   dataset :pages, :polls
 
-  describe '<r:poll>' do
+  describe '<r:poll> with no start dates' do
+
+    before do
+      Poll.update_all('start_date = NULL', 'start_date IS NOT NULL')
+    end
 
     it 'should not accept an empty tag' do
       tag = %{<r:poll/>}
 
       pages(:home).should render(tag).with_error("'title' attribute required")
+    end
+
+  end
+
+  describe '<r:poll>' do
+
+    it 'should accept an empty tag and generate no output' do
+      tag = %{<r:poll/>}
+      expected = ''
+
+      pages(:home).should render(tag).as(expected)
     end
 
     it 'should accept a title tag and generate no output' do
@@ -32,6 +47,13 @@ describe 'Poll Tags' do
     it 'should show the title of the specified poll' do
       title = 'Test Poll'
       tag = %{<r:poll title="#{title}"><r:title/></r:poll>}
+
+      pages(:home).should render(tag).as(title)
+    end
+
+    it 'should show the title of the current poll' do
+      title = 'Current Poll'
+      tag = %{<r:poll><r:title/></r:poll>}
 
       pages(:home).should render(tag).as(title)
     end

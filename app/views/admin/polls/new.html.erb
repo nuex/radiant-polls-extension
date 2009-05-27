@@ -1,16 +1,16 @@
-<% include_javascript 'polls' %>
+<% include_stylesheet 'admin/polls'
+   include_javascript 'polls'
+   include_javascript 'lowpro'
+   include_javascript 'date_selector'
+   content_for :page_scripts do %>
+     Event.addBehavior({ '#poll_start_date': DateSelector });
+<% end %>
 <h1>New Poll</h1>
 
 <%= error_messages_for 'poll' %>
 
 <% form_for [ :admin, @poll ] do |f| -%>
-  Title: <%= f.text_field :title %><br/>
-  <h3 id="options-title">Options:</h3>
-  <div id="options">
-    <p><input type="text" name="poll[option_attributes][][title]" /></p>
-    <%= render :partial => 'option', :collection => @poll.options %>
-  </div>
-  <p><%= link_to_function("Add Poll Option", "add_option('options');") %></p>
+  <%= render :partial => 'fields', :locals => { :f => f } %>
   <%= submit_tag 'Create' %>
   <%= link_to 'Cancel', admin_polls_url %>
 <% end -%>

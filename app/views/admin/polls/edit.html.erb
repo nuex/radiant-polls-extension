@@ -1,5 +1,13 @@
-<% include_javascript 'polls' %>
+<% include_stylesheet 'admin/polls'
+   include_javascript 'polls'
+   include_javascript 'lowpro'
+   include_javascript 'date_selector'
+   content_for :page_scripts do %>
+     Event.addBehavior({ '#poll_start_date': DateSelector });
+<% end %>
 <h1>Edit Poll</h1>
+
+<%= error_messages_for 'poll' %>
 
 <% form_for [ :admin, @poll ] do |f| -%>
   <%= render :partial => 'fields', :locals => { :f => f } %>

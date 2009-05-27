@@ -1,6 +1,21 @@
 class PollsDataset < Dataset::Base
 
   def load
+    create_poll 'Next Poll', :start_date => Date.today + 1.week do
+      create_option 'Oceania'
+      create_option 'Eastasia'
+      create_option 'Eurasia'
+    end
+    create_poll 'Current Poll', :start_date => Date.today do
+      create_option 'Foo'
+      create_option 'Bar'
+      create_option 'Baz'
+    end
+    create_poll 'Previous Poll', :start_date => Date.today - 1.week do
+      create_option 'Yes', 1
+      create_option 'No', 2
+      create_option 'Maybe', 3
+    end
     create_poll 'Test Poll' do
       create_option 'One', 0
       create_option 'Two', 4

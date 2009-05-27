@@ -1,0 +1,44 @@
+form.new_poll label, form.edit_poll label {
+  float: left;
+  font-size: 130%;
+  font-weight: bold;
+  width: 6em;
+}
+form.new_poll h3, form.edit_poll h3 {
+  margin: 0.75em 0 0.4em 0;
+}
+#poll_start_date {
+  position: relative;
+}
+table.calendar {
+  background: white;
+  border: 1px solid black;
+}
+table.calendar td {
+  background: white;
+  border: 1px solid #eee;
+  padding: 2px;
+  text-align: right;
+}
+table.calendar td.today a {
+  color: red !important;
+}
+table.calendar td.back, table.calendar td.forward {
+  background: #ddd;
+}
+table.calendar th {
+  background: #eee;
+}
+table.calendar a {
+  color: black;
+  text-decoration: none;
+}
+table.calendar tbody tr:last-child td {
+  border-bottom: 1px solid black;
+}
+table.calendar tbody tr td:first-child {
+  border-left: 1px solid black;
+}
+table.calendar tbody tr td:last-child {
+  border-right: 1px solid black;
+}

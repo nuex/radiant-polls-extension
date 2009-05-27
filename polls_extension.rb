@@ -1,5 +1,5 @@
 class PollsExtension < Radiant::Extension
-  version '0.2.2'
+  version '0.3.0'
   description 'Radiant gets polls.'
   url 'http://github.com/nuex/radiant-polls-extension'
   

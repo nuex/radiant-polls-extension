@@ -164,8 +164,11 @@ module PollTags
   private
 
   def find_poll(tag, options)
-    raise TagError, "'title' attribute required" unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
-    tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
+    unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
+      current_poll = Poll.find_current
+      raise TagError, "'title' attribute required" unless current_poll
+    end
+    current_poll || tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
   end
   
 end

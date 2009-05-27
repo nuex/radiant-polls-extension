@@ -37,3 +37,12 @@ Via Git Submodules:
       </table>
     </r:if_submitted>
   </r:poll>
+
+If polls are defined with a start date, then the current poll (defined as the
+poll that has the latest start date that is no later than the current date) can
+be accessed without the use of the title attribute (i.e., <r:poll>...</r:poll>).
+
+== Acknowledgements
+
+The date picker uses Dan Webb's LowPro library and its associated date_selector
+behavior.
