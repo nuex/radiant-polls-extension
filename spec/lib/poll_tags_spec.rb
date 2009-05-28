@@ -1,7 +1,24 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe 'Poll Tags' do
-  dataset :pages, :polls
+  dataset :pages
+
+  before do
+    options = { Option.new(:title => 'One') => 0,
+                Option.new(:title => 'Two') => 4,
+                Option.new(:title => 'Three') => 6 }
+    poll = Poll.create(:title => 'Test Poll', :options => options.keys)
+    options.each do |option, response_count|
+      response_count.times do
+        poll.submit_response option
+      end
+    end
+    Poll.create(:title => 'Current Poll',
+                :start_date => Date.today,
+                :options => [ Option.new(:title => 'Foo'),
+                              Option.new(:title => 'Bar'),
+                              Option.new(:title => 'Baz') ])
+  end
 
   describe '<r:poll> with no start dates' do
 
@@ -117,20 +134,20 @@ describe 'Poll Tags' do
 
   describe '<r:poll:options:each:title>' do
 
-    it 'should show the option titles' do
-      tag = %{<r:poll title="Test Poll"><r:options:each><p><r:title/></p></r:options:each></r:poll>}
-      expected = '<p>One</p><p>Two</p><p>Three</p>'
+    it 'should show the option titles in random order' do
+      tag = %{<r:poll title="Test Poll"><r:options order="rand"><r:each><r:title/></r:each></r:options></r:poll>}
+      expected = /OneTwoThree|OneThreeTwo|TwoOneThree|TwoThreeOne|ThreeOneTwo|ThreeTwoOne/
 
-      pages(:home).should render(tag).as(expected)
+      pages(:home).should render(tag).matching(expected)
     end
 
   end
 
   describe '<r:poll:options:each:number_responses>' do
 
-    it 'should show the response numbers' do
-      tag = %{<r:poll title="Test Poll"><r:options:each><p><r:number_responses/></p></r:options:each></r:poll>}
-      expected = '<p>0</p><p>4</p><p>6</p>'
+    it 'should show the response numbers in descending order' do
+      tag = %{<r:poll title="Test Poll"><r:options order="desc"><r:each><p><r:number_responses/></p></r:each></r:options></r:poll>}
+      expected = '<p>6</p><p>4</p><p>0</p>'
 
       pages(:home).should render(tag).as(expected)
     end
@@ -139,8 +156,8 @@ describe 'Poll Tags' do
 
   describe '<r:poll:options:each:percent_responses>' do
 
-    it 'should show the response percentages' do
-      tag = %{<r:poll title="Test Poll"><r:options:each><p><r:percent_responses/></p></r:options:each></r:poll>}
+    it 'should show the response percentages in ascending order' do
+      tag = %{<r:poll title="Test Poll"><r:options order="asc"><r:each><p><r:percent_responses/></p></r:each></r:options></r:poll>}
       expected = '<p>0.0</p><p>40.0</p><p>60.0</p>'
 
       pages(:home).should render(tag).as(expected)
