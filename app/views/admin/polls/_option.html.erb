@@ -1,8 +1,13 @@
-      <% fields_for "poll[option_attributes][]", option do |f| %>
-        <p class="option" id="option_<%= option.id %>">
-          <%= f.text_field :title, :index => nil %>
-          <%= f.hidden_field :id, :index => nil %>
-          <%= f.hidden_field :should_destroy, :index => nil, :class => 'should_destroy' %>
-          <%= link_to_function "Delete", "delete_option(#{option.id}, 'options')" %>
-        </p> 
-      <% end %> 
+<%
+  option_id = option.id || option_counter
+  field_base_name = 'poll[option_attributes][]'
+  fields_for field_base_name, option do |f| %>
+    <p class="option" id="option_<%= option_id %>">
+      <%= f.hidden_field :id, :index => option_id, :name => "#{field_base_name}[id]" %>
+      <%= f.hidden_field :should_destroy, :index => option_id, :name => "#{field_base_name}[should_destroy]", :class => 'should_destroy' %>
+      <%- unless object.should_destroy? -%>
+        <%= link_to_function "Delete", "delete_option(#{option_id}, 'options')", { :class => 'delete' } %>
+        <%= f.text_field :title, :index => option_id, :name => "#{field_base_name}[title]", :size => 30 %>
+      <%- end -%>
+    </p> 
+<% end %> 

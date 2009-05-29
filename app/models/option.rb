@@ -6,7 +6,7 @@ class Option < ActiveRecord::Base
   # return the percentage of responses this
   # option has
   def response_percentage
-    return 0 unless self.response_count >= 1
+    return 0 unless self.poll.response_count >= 1
     sprintf("%0.1f", (self.response_count / self.poll.response_count.to_f) * 100.0)
   end
 

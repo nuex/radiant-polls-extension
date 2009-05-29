@@ -70,9 +70,24 @@ module PollTags
   end
 
   desc %{
-    A container for options.
+    A collection of options, optionally sorted by response_count in
+    ASCending, DESCending, or RANDom order. If no order is specified
+    the result will be in whatever order is returned by the SQL query.
+
+    *Usage:*
+    <pre><code><r:options [order="asc|desc|rand"]>...</r:options></code></pre>
   }
   tag 'poll:options' do |tag|
+    tag.locals.sort_order = case tag.attr['order']
+                            when /^asc/i
+                              lambda { |a,b| a.response_count <=> b.response_count }
+                            when /^desc/i
+                              lambda { |a,b| b.response_count <=> a.response_count }
+                            when /^rand/i
+                              lambda { rand(3) - 1 }
+                            else
+                              nil
+                            end
     tag.expand
   end
 
@@ -84,8 +99,7 @@ module PollTags
   }
   tag 'poll:options:each' do |tag|
     result = []
-    options = tag.locals.poll.options
-    tag.locals.options = options
+    options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
     options.each do |option|
       tag.locals.option = option
       result << tag.expand
@@ -163,8 +177,11 @@ module PollTags
   private
 
   def find_poll(tag, options)
-    raise TagError, "'title' attribute required" unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
-    tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
+    unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
+      current_poll = Poll.find_current
+      raise TagError, "'title' attribute required" unless current_poll
+    end
+    current_poll || tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
   end
   
 end

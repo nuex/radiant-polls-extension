@@ -1,65 +1,79 @@
+<% include_stylesheet 'admin/polls' %>
 
 <h1>Polls</h1>
-<% if @polls.empty? -%>
-  <i style="color: #ccc;">You have not created any polls.  Use the link below to get started.</i>
-<% else -%>
-  <table id="polls" class="index" cellpadding="0" cellspacing="0" border="0">
-    <thead>
+
+<p>
+  Click on a poll name below to edit it, or click <code>Remove</code> to delete it.
+  If a poll has responses, click the responses value to toggle the view of the results.
+  Poll responses can be cleared by clicking <code>Clear responses</code>.
+</p>
+
+<table id="polls" class="index">
+  <thead>
+    <tr>
+      <th class="title">Title</th>
+      <th class="date">Start Date</th>
+      <th class="responses">Responses</th>
+      <th class="modify" colspan="2">Modify</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%- if @polls.empty? -%>
       <tr>
-        <th>Option</th>
-        <th>Responses</th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-    <% @polls.each do |poll| -%>
-      <tr>
-        <td>
-          <%= poll.title %>
-        </td>
-        <td class="center">
-          <%# Don't display Results link if there aren't any responses -%>
-          <% if poll.response_count != 0 %>
-            <%= link_to_function poll.response_count do |page| page.visual_effect :toggle_blind, "poll_#{poll.id}_results" end %></td>
-          <% else %>
-            <%= poll.response_count %>
-          <% end %>
-        <td>
-          <%# Don't display Clear Responses link if there aren't any responses to clear -%>
-          <% unless poll.options.find(:all, :conditions => ["response_count >= 1"]).empty? %>
-            <%= link_to('Clear Responses', {:action => :clear_responses, :id => poll.id}, :confirm => "Really clear poll responses?") %>
-          <% end %>
-        </td>
-        <td>
-          <%= link_to('Edit', :action => :edit, :id => poll) %>
-        </td>
-        <td>
-          <%= link_to "Remove", {:action => :destroy, :id => poll}, :confirm => "Really delete this poll?", :class => :remove %>
+        <td class="note" colspan="5">
+          You have not created any polls. Click <code>New Poll</code> below to get started.
         </td>
       </tr>
-      <% if poll.response_count != 0 %>
-      <tr>
-        <td colspan="6">
-          <div id="poll_<%= poll.id %>_results" class="results" style="display: none;">
-            <strong>Results</strong>
-            <table>
-              <% poll.options.sort{|a,b| b.response_count <=> a.response_count}.each do |option| %>
-                <tr>
-                  <td><strong><%= option.title %></strong>:</td>
-                  <td><%= option.response_count %></td>
-                </tr>
-              <% end %>
-            </table>
-          </div>
-        </td>
-      </tr>
+    <%- else -%>
+      <%- @polls.each do |poll| -%>
+        <tr class="node level-1">
+          <td class="poll">
+            <%= image('polls/poll') %>
+            <%= link_to(h(poll.title), edit_admin_poll_url(poll)) %>
+          </td>
+          <td class="date">
+            <%= h poll.start_date %>
+          </td>
+          <td class="responses">
+            <%# Don't display Results link if there aren't any responses -%>
+            <%- if poll.response_count > 0 -%>
+              <%= link_to_function number_with_delimiter(poll.response_count) do |page| page.visual_effect :toggle_blind, "poll_#{poll.id}_results" end %></td>
+            <%- else -%>
+              <span class="none"><%= poll.response_count %></span>
+            <%- end -%>
+          </td>
+          <td class="reset">
+            <%# Don't display Clear Responses link if there aren't any responses to clear -%>
+            <%- unless poll.options.find(:all, :conditions => ["response_count >= 1"]).empty? -%>
+              <%= link_to(image('polls/reset', :alt => 'Clear responses'), clear_responses_admin_poll_url(poll), :method => :post, :confirm => "Really clear poll responses?") %>
+            <%- end -%>
+          </td>
+          <td class="remove">
+            <%= link_to(image('remove', :alt => 'Remove poll'), admin_poll_url(poll), :method => :delete, :confirm => "Really delete this poll?") %>
+          </td>
+        </tr>
+        <%- if poll.response_count > 0 -%>
+          <tr>
+            <td colspan="5">
+              <div id="poll_<%= poll.id %>_results" class="results" style="display: none;">
+                <strong>Results</strong>
+                <table>
+                  <% poll.options.sort{|a,b| b.response_count <=> a.response_count}.each do |option| %>
+                    <tr>
+                      <td><strong><%= h option.title %></strong></td>
+                      <td><%= option.response_count %></td>
+                    </tr>
+                  <% end %>
+                </table>
+              </div>
+            </td>
+          </tr>
+        <%- end -%>
       <% end -%>
     <% end -%>
-    </tbody>
-  </table>
-<% end -%>
+  </tbody>
+</table>
 
-<br/><br/>
-<%= link_to "Create Poll", :action => :new %>
+<p>
+  <%= link_to(image('polls/new-poll', :alt => 'New Poll'), new_admin_poll_url) %>
+</p>
