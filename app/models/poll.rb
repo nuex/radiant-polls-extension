@@ -2,6 +2,8 @@ class Poll < ActiveRecord::Base
   has_many :options
   after_update :save_options
   validates_presence_of :title
+  validates_uniqueness_of :title, :allow_nil => true
+  validates_uniqueness_of :start_date, :allow_nil => true
   validates_associated :options
   before_create :set_defaults
 
