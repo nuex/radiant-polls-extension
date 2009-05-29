@@ -11,8 +11,12 @@ module PollTags
   }
   tag 'poll' do |tag|
     options = tag.attr.dup
-    tag.locals.poll = find_poll(tag, options)
-    tag.expand
+    if Poll.count > 0
+      tag.locals.poll = find_poll(tag, options)
+      tag.expand
+    else
+      'No polls found'
+    end
   end
 
   desc %{

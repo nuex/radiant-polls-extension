@@ -34,6 +34,43 @@ describe 'Poll Tags' do
 
   end
 
+  describe 'with no polls' do
+
+    before do
+      Poll.delete_all
+    end
+
+    describe '<r:poll>' do
+
+      it 'should accept a bare tag and generate an error message' do
+        tag = %{<r:poll/>}
+        expected = 'No polls found'
+
+        pages(:home).should render(tag).as(expected)
+      end
+
+      it 'should accept a title attribute and generate an error message' do
+        tag = %{<r:poll title="Test Poll"/>}
+        expected = 'No polls found'
+
+        pages(:home).should render(tag).as(expected)
+      end
+
+    end
+
+    describe '<r:poll:title>' do
+
+      it 'should generate an error message and no inner content' do
+        tag = %{<r:poll><h2><r:title/></h2></r:poll>}
+        expected = 'No polls found'
+
+        pages(:home).should render(tag).as(expected)
+      end
+
+    end
+
+  end
+
   describe '<r:poll>' do
 
     it 'should accept an empty tag and generate no output' do
@@ -43,7 +80,7 @@ describe 'Poll Tags' do
       pages(:home).should render(tag).as(expected)
     end
 
-    it 'should accept a title tag and generate no output' do
+    it 'should accept a title attribute and generate no output' do
       tag = %{<r:poll title="Test Poll"/>}
       expected = ''
 
