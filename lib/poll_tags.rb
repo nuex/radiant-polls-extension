@@ -140,9 +140,8 @@ module PollTags
     <pre><code><r:poll:form title="My Poll"><r:options:each><r:input /><r:text /></r:options:each><r:submit [value="Go!"] /></r:poll:form></code></pre>
   }
   tag 'poll:submit' do |tag|
-    options = tag.attr.dup
-    options[:value] = 'Submit' unless options[:value]
-    %{<input type="submit" name="poll[submit]" value="#{options[:value]}" />}
+    value = tag.attr['value'] || 'Submit'
+    %{<input type="submit" name="poll[submit]" value="#{value}" />}
   end
 
   desc %{
