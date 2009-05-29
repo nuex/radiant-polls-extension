@@ -7,10 +7,4 @@
 <% end %>
 <h1>Edit Poll</h1>
 
-<%= error_messages_for 'poll' %>
-
-<% form_for [ :admin, @poll ] do |f| -%>
-  <%= render :partial => 'fields', :locals => { :f => f } %>
-  <%= submit_tag 'Save' %>
-  <%= link_to 'Cancel', admin_polls_url %>
-<% end -%>
+<%= render :partial => 'form' %>

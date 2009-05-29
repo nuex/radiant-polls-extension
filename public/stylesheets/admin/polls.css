@@ -25,15 +25,26 @@
   text-decoration: none;
 }
 
-form.new_poll label, form.edit_poll label {
-  float: left;
-  font-size: 130%;
-  font-weight: bold;
-  width: 6em;
+#content #poll_form_area .title {
+  margin-top: 1em;
 }
-form.new_poll h3, form.edit_poll h3 {
-  margin: 0.75em 0 0.4em 0;
+#content #poll_form_area .title label {
+  font-size: 120%;
 }
+
+#options p.option {
+  margin-bottom: 1em;
+}
+#options .error-with-field {
+  margin-top: -1em;
+}
+#options .delete {
+  margin: 0 0.5em;
+}
+#content .form-area p#add-option {
+  margin-top: 1em;
+}
+
 #poll_start_date {
   position: relative;
 }
