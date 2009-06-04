@@ -10,6 +10,9 @@ Via Git Submodules:
   rake radiant:extensions:polls:migrate
   rake radiant:extensions:polls:update
 
+This extension uses will_paginate to allow you to create a paginated list of "archived" polls.
+You must provide the will_paginate gem; it is not included with this extension.
+
 == Usage
 
   <r:poll title="My Poll">
@@ -42,7 +45,31 @@ If polls are defined with a start date, then the current poll (defined as the
 poll that has the latest start date that is no later than the current date) can
 be accessed without the use of the title attribute (i.e., <r:poll>...</r:poll>).
 
+Poll "archives" can also be listed, using pagination via the will_paginate plugin.
+
+  <r:polls per_page="10" by="start_date" order="desc">
+    <r:each:poll>
+      <p><r:title /></p>
+      <table>
+        <tr>
+          <th>Answer</th>
+          <th>Result</th>
+        </tr>
+        <r:options:each>
+          <tr>
+            <td><r:title /></td>
+            <td><r:number_responses /> (<r:percent_responses />%)</td>
+          </tr>
+        </r:options:each>
+      </table>
+    </r:each:poll>
+    <r:pages />
+  </r:polls>
+
 == Acknowledgements
 
 The date picker uses Dan Webb's LowPro library and its associated date_selector
 behavior.
+
+The pagination related code was borrowed liberally from the paginate extension, especially
+saturnflyer's enhancements to it (http:///github.com/saturnflyer/radiant-paginate-extension).
