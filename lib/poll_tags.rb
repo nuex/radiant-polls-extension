@@ -97,8 +97,10 @@ module PollTags
     poll = tag.locals.poll
     result = %Q{
       <form action="/pages/#{tag.locals.page.id}/poll_response" method="post" id="poll_form">
-        #{tag.expand}
-        <input type="hidden" name="poll_id" value="#{tag.locals.poll.id}" />
+        <div>
+          #{tag.expand}
+          <input type="hidden" name="poll_id" value="#{tag.locals.poll.id}" />
+        </div>
       </form>
     }
   end
