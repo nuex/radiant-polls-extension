@@ -7,8 +7,9 @@ class PollResponseController < ApplicationController
     @page.request, @page.response = request, response
 
     poll = Poll.find(params[:poll_id])
+    current_poll = Poll.find_current
     session[:submitted_polls] = [] unless session[:submitted_polls]
-    unless session[:submitted_polls].include?(poll.id)
+    if !session[:submitted_polls].include?(poll.id) && (!current_poll || current_poll.id == poll.id)
       ResponseCache.instance.expire_response(@page.url)
 
       session[:submitted_polls] << poll.id

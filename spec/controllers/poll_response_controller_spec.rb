@@ -22,50 +22,112 @@ describe PollResponseController do
       @page.should_receive(:response=).with(an_instance_of(ActionController::TestResponse))
       @page.should_receive(:submitted_polls=).with(an_instance_of(Array))
       Page.should_receive(:find).with(duck_type(:to_i)).and_return(@page)
-
-      @poll = mock_model(Poll, :id => 42)
-      Poll.should_receive(:find).with(duck_type(:to_i)).and_return(@poll)
-
-      @option = mock_model(Option)
     end
 
-    it 'should not cache the response' do
-      Option.should_receive(:find).with(duck_type(:to_i)).and_return(@option)
-      @poll.should_receive(:submit_response).with(an_instance_of(Option))
-      @page.should_receive(:url).twice.and_return('/')
+    describe 'poll has not been previously submitted' do
 
-      post :create, :page_id => '1', :poll_id => '42', :response_id => '111'
-      response.headers['Cache-Control'].should eql('no-cache')
+      before :each do
+        @poll = mock_model(Poll, :id => 42)
+        Poll.should_receive(:find).with(duck_type(:to_i)).and_return(@poll)
+        @page.should_receive(:url).twice.and_return('/')
+        @poll.should_receive(:submit_response).with(an_instance_of(Option))
+        @option = mock_model(Option)
+        Option.should_receive(:find).with(duck_type(:to_i)).and_return(@option)
+      end
+
+      describe 'a current poll does not exist' do
+
+        before :each do
+          Poll.should_receive(:find_current).with(no_args()).and_return(nil)
+        end
+
+        it 'should not cache the response' do
+          post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+          response.headers['Cache-Control'].should eql('no-cache')
+        end
+
+        it 'should instantiate the list of submitted polls with the poll ID' do
+          post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+          session[:submitted_polls].should eql([@poll.id])
+        end
+
+        it 'should add the poll to the list of submitted polls' do
+          session[:submitted_polls] = [@poll.id - 1]
+          post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+          session[:submitted_polls].should eql([@poll.id - 1, @poll.id])
+        end
+
+      end
+
+      describe 'a current poll exists' do
+
+        before :each do
+          @current_poll = mock_model(Poll, :id => @poll.id)
+          Poll.should_receive(:find_current).with(no_args()).and_return(@current_poll)
+        end
+
+        it 'should instantiate the list of submitted polls with the poll ID' do
+          post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+          session[:submitted_polls].should eql([@poll.id])
+        end
+
+      end
+
     end
 
-    it 'should instantiate the list of submitted polls with the poll ID' do
-      Option.should_receive(:find).with(duck_type(:to_i)).and_return(@option)
-      @poll.should_receive(:submit_response).with(an_instance_of(Option))
-      @page.should_receive(:url).twice.and_return('/')
+    describe 'poll has been previously submitted' do
 
-      post :create, :page_id => '1', :poll_id => '42', :response_id => '111'
-      session[:submitted_polls].should eql([42])
+      before :each do
+        @poll = mock_model(Poll, :id => 42)
+        Poll.should_receive(:find).with(duck_type(:to_i)).and_return(@poll)
+        @poll.should_not_receive(:submit_response)
+        @page.should_receive(:url).and_return('/')
+        Option.should_not_receive(:find)
+        session[:submitted_polls] = [@poll.id]
+      end
+
+      describe 'a current poll exists' do
+
+        it 'should not add the poll to the list of submitted polls' do
+          @current_poll = mock_model(Poll, :id => @poll.id)
+          Poll.should_receive(:find_current).with(no_args()).and_return(@current_poll)
+
+          post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+          session[:submitted_polls].should eql([@poll.id])
+        end
+
+      end
+
+      describe 'a current poll does not exist' do
+
+        it 'should not add the poll to the list of submitted polls' do
+          Poll.should_receive(:find_current).with(no_args()).and_return(nil)
+
+          post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+          session[:submitted_polls].should eql([@poll.id])
+        end
+
+      end
+
     end
 
-    it 'should add the poll to the list of submitted polls' do
-      Option.should_receive(:find).with(duck_type(:to_i)).and_return(@option)
-      @poll.should_receive(:submit_response).with(an_instance_of(Option))
-      @page.should_receive(:url).twice.and_return('/')
+    describe 'poll is out of date' do
 
-      session[:submitted_polls] = [41]
-      post :create, :page_id => '1', :poll_id => '42', :response_id => '111'
-      session[:submitted_polls].should eql([41,42])
-    end
+      it 'should not alter a past poll' do
+        @poll = mock_model(Poll, :id => 42)
+        Poll.should_receive(:find).with(duck_type(:to_i)).and_return(@poll)
+        @page.should_receive(:url).and_return('/')
+        @poll.should_not_receive(:submit_response)
+        @current_poll = mock_model(Poll, :id => @poll.id + 1)
+        Poll.should_receive(:find_current).with(no_args()).and_return(@current_poll)
+        @current_poll.should_not_receive(:submit_response)
+        Option.should_not_receive(:find)
 
-    it 'should not add the poll to the list of submitted polls' do
-      Option.should_not_receive(:find)
-      @poll.should_not_receive(:submit_response)
-      @page.should_receive(:url).once.and_return('/')
+        post :create, :page_id => @page.id, :poll_id => @poll.id.to_s, :response_id => '111'
+      end
 
-      session[:submitted_polls] = [42]
-      post :create, :page_id => '1', :poll_id => '42', :response_id => '111'
-      session[:submitted_polls].should eql([42])
     end
 
   end
+
 end
