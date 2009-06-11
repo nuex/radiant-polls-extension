@@ -118,7 +118,7 @@ describe 'Poll Tags' do
 
     it 'should generate an empty form' do
       tag = %{<r:poll title="Test Poll"><r:form/></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
@@ -129,14 +129,14 @@ describe 'Poll Tags' do
 
     it 'should generate an empty form with a default submit button' do
       tag = %{<r:poll title="Test Poll"><r:form><r:submit/></r:form></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<input type="submit".*?value="Submit"[^>]*>\s*<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*<input type="submit".*?value="Submit"[^>]*>\s*<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
 
     it 'should generate an empty form with a custom submit button' do
       tag = %{<r:poll title="Test Poll"><r:form><r:submit value="Vote"/></r:form></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<input type="submit".*?value="Vote"[^>]*>\s*<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*<input type="submit".*?value="Vote"[^>]*>\s*<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
@@ -147,7 +147,7 @@ describe 'Poll Tags' do
 
     it 'should generate an empty form' do
       tag = %{<r:poll title="Test Poll"><r:form><r:options/></r:form></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
@@ -158,7 +158,7 @@ describe 'Poll Tags' do
 
     it 'should generate an empty form' do
       tag = %{<r:poll title="Test Poll"><r:form><r:options:each/></r:form></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
@@ -169,7 +169,7 @@ describe 'Poll Tags' do
 
     it 'should generate a form with input options' do
       tag = %{<r:poll title="Test Poll"><r:form><r:options:each><r:input/></r:options:each></r:form></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*(<input type="radio"[^>]*>\s*){3}<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*(<input type="radio"[^>]*>\s*){3}<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
@@ -180,7 +180,7 @@ describe 'Poll Tags' do
 
     it 'should show the option titles' do
       tag = %{<r:poll title="Test Poll"><r:form><r:options:each><r:input/><r:title/></r:options:each></r:form></r:poll>}
-      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*(<input type="radio"[^>]*>\s*(One|Two|Three)\s*){3}<input type="hidden"[^>]*>\s*</form>}
+      expected = %r{<form action="/pages/\d+/poll_response" method="post" id="poll_form">\s*<div>\s*(<input type="radio"[^>]*>\s*(One|Two|Three)\s*){3}<input type="hidden"[^>]*>\s*</div>\s*</form>}
 
       pages(:home).should render(tag).matching(expected)
     end
