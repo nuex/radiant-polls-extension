@@ -7,7 +7,7 @@ if (Prototype.Version.indexOf(LowPro.CompatibleWithPrototype) != 0 && window.con
                   " it may not work as expected with this version (" + Prototype.Version + ")");
 
 if (!Element.addMethods) 
-  Element.addMethods = function(o) { Object.extend(Element.Methods, o) };
+  Element.addMethods = function(o) { Object.extend(Element.Methods, o); };
 
 // Simple utility methods for working with the DOM
 DOM = {};
@@ -24,7 +24,7 @@ DOM.Builder = {
        } else {
          children = arguments;
        };
-       children = $A(children).flatten()
+       children = $A(children).flatten();
      }
      return DOM.Builder.create(tag, attrs, children);
     };
@@ -97,7 +97,7 @@ Event.addBehavior = function(rules) {
     Ajax.Responders.register({
       onComplete : function() { 
         if (Event.addBehavior.reassignAfterAjax) 
-          setTimeout(function() { ab.reload() }, 10);
+          setTimeout(function() { ab.reload(); }, 10);
       }
     });
     ab.responderApplied = true;
@@ -114,8 +114,8 @@ Event.delegate = function(rules) {
       var element = $(e.element());
       for (var selector in rules)
         if (element.match(selector)) return rules[selector].apply(this, $A(arguments));
-    }
-}
+    };
+};
 
 Object.extend(Event.addBehavior, {
   rules : {}, cache : [],
@@ -163,7 +163,7 @@ Object.extend(Event.addBehavior, {
   _wrapObserver: function(observer) {
     return function(event) {
       if (observer.call(this, event) === false) event.stop(); 
-    }
+    };
   }
   
 });
@@ -278,9 +278,17 @@ Remote.Base = {
     this._bindCallbacks();
   },
   _makeRequest : function(options) {
-    if (options.update) new Ajax.Updater(options.update, options.url, options);
-    else new Ajax.Request(options.url, options);
-    return false;
+    if (options.confirm) {
+      if (confirm(options.confirm)) {
+        if (options.update) new Ajax.Updater(options.update, options.url, options);
+        else new Ajax.Request(options.url, options);
+        return false;
+      }
+    } else {
+      if (options.update) new Ajax.Updater(options.update, options.url, options);
+      else new Ajax.Request(options.url, options);
+      return false;
+    }
   },
   _bindCallbacks: function() {
     $w('onCreate onComplete onException onFailure onInteractive onLoading onLoaded onSuccess').each(function(cb) {
@@ -288,7 +296,7 @@ Remote.Base = {
         this.options[cb] = this.options[cb].bind(this);
     }.bind(this));
   }
-}
+};
 
 Remote.Link = Behavior.create(Remote.Base, {
   onclick : function() {
@@ -303,14 +311,29 @@ Remote.Form = Behavior.create(Remote.Base, {
     var sourceElement = e.element();
     
     if (['input', 'button'].include(sourceElement.nodeName.toLowerCase()) && 
-        sourceElement.type == 'submit')
+        sourceElement.type.match(/submit|image/))
       this._submitButton = sourceElement;
   },
   onsubmit : function() {
+    var parameters = this.element.serialize();
+
+    if (parameters.blank()) {
+      parameters = this.options.parameters;
+    } else {
+      parameters = parameters + '&' + this.options.parameters;
+    }
+    delete this.options.parameters;
+    if (this._submitButton) {
+      if (parameters.blank()) {
+        parameters = this._submitButton.name + "=" + this._submitButton.value;
+      } else {
+        parameters = parameters + '&' + this._submitButton.name + "=" + this._submitButton.value;
+      }
+    }
     var options = Object.extend({
       url : this.element.action,
       method : this.element.method || 'get',
-      parameters : this.element.serialize({ submit: this._submitButton.name })
+      parameters : parameters
     }, this.options);
     this._submitButton = null;
     return this._makeRequest(options);
