@@ -1,7 +1,36 @@
+# -*- coding: utf-8 -*-
 module PollTags
   include Radiant::Taggable
+  include WillPaginate::ViewHelpers
+  
+  class RadiantLinkRenderer < WillPaginate::LinkRenderer
+    include ActionView::Helpers::TagHelper
 
+    def initialize(tag)
+      @tag = tag
+    end
+    
+    def page_link(page, text, attributes = {})
+      attributes = tag_options(attributes)
+      @paginate_url_route = @paginate_url_route.blank? ? PollsExtension::UrlCache : @paginate_url_route
+      %Q{<a href="#{@tag.locals.page.url}#{@paginate_url_route}#{page}"#{attributes}>#{text}</a>}
+    end
+    
+    def gap_marker
+      '<span class="gap">&#8230;</span>'
+    end
+
+    def page_span(page, text, attributes = {})
+      attributes = tag_options(attributes)
+      "<span#{attributes}>#{text}</span>"
+    end
+  end
+  
   class TagError < StandardError; end
+
+  ##
+  ## Individual polls
+  ##
 
   desc %{
     Selects the active poll.
@@ -11,8 +40,13 @@ module PollTags
   }
   tag 'poll' do |tag|
     options = tag.attr.dup
-    tag.locals.poll = find_poll(tag, options)
-    tag.expand
+    tag.locals.page.cache = false
+    if Poll.count > 0
+      tag.locals.poll = find_poll(tag, options)
+      tag.expand
+    else
+      'No polls found'
+    end
   end
 
   desc %{
@@ -63,16 +97,33 @@ module PollTags
     poll = tag.locals.poll
     result = %Q{
       <form action="/pages/#{tag.locals.page.id}/poll_response" method="post" id="poll_form">
-        #{tag.expand}
-        <input type="hidden" name="poll_id" value="#{tag.locals.poll.id}" />
+        <div>
+          #{tag.expand}
+          <input type="hidden" name="poll_id" value="#{tag.locals.poll.id}" />
+        </div>
       </form>
     }
   end
 
   desc %{
-    A container for options.
+    A collection of options, optionally sorted by response_count in
+    ASCending, DESCending, or RANDom order. If no order is specified
+    the result will be in whatever order is returned by the SQL query.
+
+    *Usage:*
+    <pre><code><r:options [order="asc|desc|rand"]>...</r:options></code></pre>
   }
   tag 'poll:options' do |tag|
+    tag.locals.sort_order = case tag.attr['order']
+                            when /^asc/i
+                              lambda { |a,b| a.response_count <=> b.response_count }
+                            when /^desc/i
+                              lambda { |a,b| b.response_count <=> a.response_count }
+                            when /^rand/i
+                              lambda { rand(3) - 1 }
+                            else
+                              nil
+                            end
     tag.expand
   end
 
@@ -84,8 +135,7 @@ module PollTags
   }
   tag 'poll:options:each' do |tag|
     result = []
-    options = tag.locals.poll.options
-    tag.locals.options = options
+    options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
     options.each do |option|
       tag.locals.option = option
       result << tag.expand
@@ -121,9 +171,8 @@ module PollTags
     <pre><code><r:poll:form title="My Poll"><r:options:each><r:input /><r:text /></r:options:each><r:submit [value="Go!"] /></r:poll:form></code></pre>
   }
   tag 'poll:submit' do |tag|
-    options = tag.attr.dup
-    options[:value] = 'Submit' unless options[:value]
-    %{<input type="submit" name="poll[submit]" value="#{options[:value]}" />}
+    value = tag.attr['value'] || 'Submit'
+    %{<input type="submit" name="poll[submit]" value="#{value}" />}
   end
 
   desc %{
@@ -160,11 +209,135 @@ module PollTags
     "#{tag.locals.page.request.cookies.inspect}"
   end
 
+  ##
+  ## Collections of polls
+  ##
+
+  desc %{
+    Selects all polls.
+
+    *Usage:*
+    <pre><code><r:polls [per_page="10"] [by="attribute"] [order="asc|desc"] [show_current="true|false"] /></code></pre>
+
+    By default, polls are sorted in ascending order by title and limited to 10 per page;
+    the current poll and any future polls are excluded. To include the current poll, set
+    show_current = "true". Any polls where `attribute` is null are also excluded, so if
+    you have a set of polls that include polls that do not have a defined start date, then
+    when specifying `by="start_date"` only those polls with start dates will be shown.
+  }
+  tag 'polls' do |tag|
+    if Poll.count > 0
+      options = find_options(tag)
+
+      tag.locals.paginated_polls = Poll.paginate(options)
+      tag.expand
+    else
+      'No polls found'
+    end
+  end
+
+  desc %{
+    Loops through each poll and renders the contents.
+  }
+  tag 'polls:each' do |tag|
+    result = []
+
+    tag.locals.paginated_polls.each do |poll|
+      tag.locals.poll = poll
+      result << tag.expand
+    end
+
+    result
+  end
+
+  desc %{
+    Creates the context for a single poll.
+  }
+  tag 'polls:each:poll' do |tag|
+    tag.expand
+  end
+
+  desc %{
+    Renders pagination links with will_paginate
+    The following optional attributes may be controlled:
+    
+    * id - the id to apply to the containing @<div>@
+    * class - the class to apply to the containing @<div>@
+    * previous_label - default: "« Previous"
+    * prev_label - deprecated variant of previous_label
+    * next_label - default: "Next »"
+    * inner_window - how many links are shown around the current page (default: 4)
+    * outer_window - how many links are around the first and the last page (default: 1)
+    * separator - string separator for page HTML elements (default: single space)
+    * page_links - when false, only previous/next links are rendered (default: true)
+    * container - when false, pagination links are not wrapped in a containing @<div>@ (default: true)
+    
+    *Usage:*
+    
+    <pre><code><r:polls>
+      <r:pages [id=""] [class="pagination"] [previous_label="&laquo; Previous"]
+      [next_label="Next &raquo;"] [inner_window="4"] [outer_window="1"]
+      [separator=" "] [page_links="true"] [container="true"]/>
+    </r:paginate>
+    </code></pre>
+  }
+  tag 'polls:pages' do |tag|
+    renderer = RadiantLinkRenderer.new(tag)
+    
+    options = {}
+    
+    [:id, :class, :previous_label, :prev_label, :next_label, :inner_window, :outer_window, :separator].each do |a|
+      options[a] = tag.attr[a.to_s] unless tag.attr[a.to_s].blank?
+    end
+    options[:page_links] = false if 'false' == tag.attr['page_links']
+    options[:container]  = false if 'false' == tag.attr['container']
+
+    will_paginate tag.locals.paginated_polls, options.merge(:renderer => renderer)
+  end
+
   private
 
   def find_poll(tag, options)
-    raise TagError, "'title' attribute required" unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
-    tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
+    unless title = options.delete('title') or id = options.delete('id') or tag.locals.poll
+      current_poll = Poll.find_current
+      raise TagError, "'title' attribute required" unless current_poll
+    end
+    current_poll || tag.locals.poll || Poll.find_by_title(title) || Poll.find(id)
   end
-  
+
+  def find_options(tag)
+    options = {}
+
+    options[:page] = tag.attr['page'] || @request.path[/^#{Regexp.quote(tag.locals.page.url)}#{Regexp.quote(PollsExtension::UrlCache)}(\d+)\/?$/, 1]
+    options[:per_page] = (tag.attr['per_page'] || 10).to_i
+    raise TagError.new('the per_page attribute of the polls tag must be a positive integer') unless options[:per_page] > 0
+    by = tag.attr['by'] || 'title'
+    order = tag.attr['order'] || 'asc'
+    order_string = ''
+    if Poll.new.attributes.keys.include?(by)
+      order_string << by
+    else
+      raise TagError.new('the by attribute of the polls tag must specify a valid field name')
+    end
+    if order =~ /^(a|de)sc$/i
+      order_string << " #{order.upcase}"
+    else
+      raise TagError.new('the order attribute of the polls tag must be either "asc" or "desc"')
+    end
+    options[:order] = order_string
+
+    # Exclude polls with null `by' values as well as any future polls and,
+    # if it exists, the current poll unless it is specifically included.
+    options[:conditions] = [ "#{by} IS NOT NULL AND COALESCE(start_date,?) <= ?",
+                             Date.civil(1900,1,1), Date.today ]
+    unless tag.attr['show_current'] == 'true'
+      if current_poll = Poll.find_current
+        options[:conditions].first << ' AND id <> ?'
+        options[:conditions] << current_poll.id
+      end
+    end
+
+    options
+  end
+
 end

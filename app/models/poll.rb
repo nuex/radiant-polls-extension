@@ -2,8 +2,18 @@ class Poll < ActiveRecord::Base
   has_many :options
   after_update :save_options
   validates_presence_of :title
+  validates_uniqueness_of :title, :allow_nil => true
+  validates_uniqueness_of :start_date, :allow_nil => true
   validates_associated :options
   before_create :set_defaults
+
+  # Find the current poll. The current poll is defined as the poll that has the
+  # latest start date that is no later than the current date. If no poll has a
+  # defined start date, then there is no current poll.
+  def self.find_current
+    Poll.find(:first, :order => 'start_date DESC',
+              :conditions => [ 'start_date IS NOT NULL AND start_date <= ?', Date.today ])
+  end
 
   def option_attributes=(option_attributes)
     option_attributes.each do |attributes|
