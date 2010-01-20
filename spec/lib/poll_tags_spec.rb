@@ -260,7 +260,7 @@ describe 'Poll Tags' do
 
       it 'should not accept an invalid field name and generate an error' do
         tag = %{<r:polls by="foobar"/>}
-        
+
         pages(:home).should render(tag).with_error('the by attribute of the polls tag must specify a valid field name')
       end
 
@@ -271,7 +271,7 @@ describe 'Poll Tags' do
       it 'should accept "asc" and generate no output' do
         tag = %{<r:polls order="asc"/>}
         expected = ''
-        
+
         pages(:home).should render(tag).as(expected)
       end
 
@@ -283,7 +283,7 @@ describe 'Poll Tags' do
       end
 
       it 'should not accept a value other than "asc" or "desc" and generate an error' do
-        tag = %{<r:polls order="desc"/>}
+        tag = %{<r:polls order="xxx"/>}
 
         pages(:home).should render(tag).with_error('the order attribute of the polls tag must be either "asc" or "desc"')
       end
