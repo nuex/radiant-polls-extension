@@ -1,3 +1,7 @@
+=== 0.3.2
+
+  * added <r:poll:options:each:if_first/> and <r:poll:options:each:if_last/>
+
 === 0.3.1
 
   * 0.8.1 compatibility (davec)
