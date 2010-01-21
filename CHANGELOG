@@ -1,3 +1,12 @@
+=== 0.3.1
+
+  * 0.8.1 compatibility (davec)
+  * Admin UI enhancements (davec)
+  * will_paginate poll pagination (davec)
+  * poll sorting options (davec)
+  * better handling of displaying multiple polls (davec)
+  * unit and functional tests (davec)
+
 === 0.2.1
 
   * polls in radiant
