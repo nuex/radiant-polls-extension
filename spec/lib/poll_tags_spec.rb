@@ -242,6 +242,28 @@ describe 'Poll Tags' do
 
   end
 
+  describe '<r:poll:options:each:unless_first>' do
+
+    it 'should render inner tags only unless the current context is the first option' do
+      tag = %{<r:poll title="Test Poll"><r:options:each><r:unless_first>,</r:unless_first><r:percent_responses /></r:options:each></r:poll>}
+      expected = '60.0,40.0,0.0'
+
+      pages(:home).should render(tag).as(expected)
+    end
+
+  end
+
+  describe '<r:poll:options:each:unless_last>' do
+
+    it 'should render inner tags only unless the current context is the last option' do
+      tag = %{<r:poll title="Test Poll"><r:options:each><r:percent_responses /><r:unless_last>,</r:unless_last></r:options:each></r:poll>}
+      expected = '60.0,40.0,0.0'
+
+      pages(:home).should render(tag).as(expected)
+    end
+
+  end
+
   ##
   ## Test poll archives
   ##
