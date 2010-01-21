@@ -2,20 +2,20 @@
 module PollTags
   include Radiant::Taggable
   include WillPaginate::ViewHelpers
-  
+
   class RadiantLinkRenderer < WillPaginate::LinkRenderer
     include ActionView::Helpers::TagHelper
 
     def initialize(tag)
       @tag = tag
     end
-    
+
     def page_link(page, text, attributes = {})
       attributes = tag_options(attributes)
       @paginate_url_route = @paginate_url_route.blank? ? PollsExtension::UrlCache : @paginate_url_route
       %Q{<a href="#{@tag.locals.page.url}#{@paginate_url_route}#{page}"#{attributes}>#{text}</a>}
     end
-    
+
     def gap_marker
       '<span class="gap">&#8230;</span>'
     end
@@ -25,7 +25,7 @@ module PollTags
       "<span#{attributes}>#{text}</span>"
     end
   end
-  
+
   class TagError < StandardError; end
 
   ##
@@ -140,6 +140,32 @@ module PollTags
       result << tag.expand
     end
     result
+  end
+
+  desc %{
+    Render inner content if the current contextual option is the first option.
+
+    *Usage:*
+    <pre><code><r:options:each:if_first>...</r:options:each:if_first></code></pre>
+  }
+  tag 'poll:options:each:if_first' do |tag|
+    options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
+    if options.first == tag.locals.option
+      tag.expand
+    end
+  end
+
+  desc %{
+    Render inner content if the current contextual option is the last option.
+
+    *Usage:*
+    <pre><code><r:options:each:if_last>...</r:options:each:if_last></code></pre>
+  }
+  tag 'poll:options:each:if_last' do |tag|
+    options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
+    if options.last == tag.locals.option
+      tag.expand
+    end
   end
 
   desc %{
@@ -259,7 +285,7 @@ module PollTags
   desc %{
     Renders pagination links with will_paginate
     The following optional attributes may be controlled:
-    
+
     * id - the id to apply to the containing @<div>@
     * class - the class to apply to the containing @<div>@
     * previous_label - default: "« Previous"
@@ -270,9 +296,9 @@ module PollTags
     * separator - string separator for page HTML elements (default: single space)
     * page_links - when false, only previous/next links are rendered (default: true)
     * container - when false, pagination links are not wrapped in a containing @<div>@ (default: true)
-    
+
     *Usage:*
-    
+
     <pre><code><r:polls>
       <r:pages [id=""] [class="pagination"] [previous_label="&laquo; Previous"]
       [next_label="Next &raquo;"] [inner_window="4"] [outer_window="1"]
@@ -282,9 +308,9 @@ module PollTags
   }
   tag 'polls:pages' do |tag|
     renderer = RadiantLinkRenderer.new(tag)
-    
+
     options = {}
-    
+
     [:id, :class, :previous_label, :prev_label, :next_label, :inner_window, :outer_window, :separator].each do |a|
       options[a] = tag.attr[a.to_s] unless tag.attr[a.to_s].blank?
     end

@@ -220,6 +220,28 @@ describe 'Poll Tags' do
 
   end
 
+  describe '<r:poll:options:each:if_first>' do
+
+    it 'should render inner tags only if the current context is the first option' do
+      tag = %{<r:poll title="Test Poll"><ul><r:options:each><li<r:if_first> class="first"</r:if_first>><r:percent_responses /></li></r:options:each></ul></r:poll>}
+      expected = '<ul><li class="first">60.0</li><li>40.0</li><li>0.0</li></ul>'
+
+      pages(:home).should render(tag).as(expected)
+    end
+
+  end
+
+  describe '<r:poll:options:each:if_last>' do
+
+    it 'should render inner tags only if the current context is the last option' do
+      tag = %{<r:poll title="Test Poll"><ul><r:options:each><li<r:if_last> class="last"</r:if_last>><r:percent_responses /></li></r:options:each></ul></r:poll>}
+      expected = '<ul><li>60.0</li><li>40.0</li><li class="last">0.0</li></ul>'
+
+      pages(:home).should render(tag).as(expected)
+    end
+
+  end
+
   ##
   ## Test poll archives
   ##
