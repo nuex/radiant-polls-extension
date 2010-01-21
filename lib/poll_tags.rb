@@ -169,6 +169,32 @@ module PollTags
   end
 
   desc %{
+    Render inner content unless the current contextual option is the first option.
+
+    *Usage:*
+    <pre><code><r:options:each:unless_first>...</r:options:each:unless_first></code></pre>
+  }
+  tag 'poll:options:each:unless_first' do |tag|
+    options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
+    unless options.first == tag.locals.option
+      tag.expand
+    end
+  end
+
+  desc %{
+    Render inner content unless the current contextual option is the last option.
+
+    *Usage:*
+    <pre><code><r:options:each:unless_last>...</r:options:each:unless_last></code></pre>
+  }
+  tag 'poll:options:each:unless_last' do |tag|
+    options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
+    unless options.last == tag.locals.option
+      tag.expand
+    end
+  end
+
+  desc %{
     Show the poll option radio button input type.
 
     *Usage:*

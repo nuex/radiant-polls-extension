@@ -1,6 +1,7 @@
 === 0.3.2
 
   * added <r:poll:options:each:if_first/> and <r:poll:options:each:if_last/>
+  * added <r:poll:options:each:unless_first /> and <r:poll:options:each:unless_last/>
 
 === 0.3.1
 
