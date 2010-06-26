@@ -1,6 +1,5 @@
 <% include_stylesheet 'admin/polls'
    include_javascript 'polls'
-   include_javascript 'lowpro'
    include_javascript 'date_selector'
    content_for :page_scripts do %>
      Event.addBehavior({ '#poll_start_date': DateSelector });
