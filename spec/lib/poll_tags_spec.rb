@@ -223,7 +223,7 @@ describe 'Poll Tags' do
   describe '<r:poll:options:each:if_first>' do
 
     it 'should render inner tags only if the current context is the first option' do
-      tag = %{<r:poll title="Test Poll"><ul><r:options:each><li<r:if_first> class="first"</r:if_first>><r:percent_responses /></li></r:options:each></ul></r:poll>}
+      tag = %{<r:poll title="Test Poll"><ul><r:options order="desc"><r:each><li<r:if_first> class="first"</r:if_first>><r:percent_responses /></li></r:each></r:options></ul></r:poll>}
       expected = '<ul><li class="first">60.0</li><li>40.0</li><li>0.0</li></ul>'
 
       pages(:home).should render(tag).as(expected)
@@ -234,7 +234,7 @@ describe 'Poll Tags' do
   describe '<r:poll:options:each:if_last>' do
 
     it 'should render inner tags only if the current context is the last option' do
-      tag = %{<r:poll title="Test Poll"><ul><r:options:each><li<r:if_last> class="last"</r:if_last>><r:percent_responses /></li></r:options:each></ul></r:poll>}
+      tag = %{<r:poll title="Test Poll"><ul><r:options order="desc"><r:each><li<r:if_last> class="last"</r:if_last>><r:percent_responses /></li></r:each></r:options></ul></r:poll>}
       expected = '<ul><li>60.0</li><li>40.0</li><li class="last">0.0</li></ul>'
 
       pages(:home).should render(tag).as(expected)
@@ -245,7 +245,7 @@ describe 'Poll Tags' do
   describe '<r:poll:options:each:unless_first>' do
 
     it 'should render inner tags only unless the current context is the first option' do
-      tag = %{<r:poll title="Test Poll"><r:options:each><r:unless_first>,</r:unless_first><r:percent_responses /></r:options:each></r:poll>}
+      tag = %{<r:poll title="Test Poll"><r:options order="desc"><r:each><r:unless_first>,</r:unless_first><r:percent_responses /></r:each></r:options></r:poll>}
       expected = '60.0,40.0,0.0'
 
       pages(:home).should render(tag).as(expected)
@@ -256,7 +256,7 @@ describe 'Poll Tags' do
   describe '<r:poll:options:each:unless_last>' do
 
     it 'should render inner tags only unless the current context is the last option' do
-      tag = %{<r:poll title="Test Poll"><r:options:each><r:percent_responses /><r:unless_last>,</r:unless_last></r:options:each></r:poll>}
+      tag = %{<r:poll title="Test Poll"><r:options order="desc"><r:each><r:percent_responses /><r:unless_last>,</r:unless_last></r:each></r:options></r:poll>}
       expected = '60.0,40.0,0.0'
 
       pages(:home).should render(tag).as(expected)
