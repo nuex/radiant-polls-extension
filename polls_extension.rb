@@ -5,7 +5,9 @@ class PollsExtension < Radiant::Extension
 
   def activate
     require_dependency 'application_controller'
-    admin.tabs.add 'Polls', '/admin/polls', :after => 'Layouts', :visibility => [:all]
+    tab 'Content' do
+      add_item 'Polls', '/admin/polls', :after => 'Pages'
+    end
     if Radiant::Config.table_exists?
       Radiant::Config['paginate.url_route'] = '' unless Radiant::Config['paginate.url_route']
       PollsExtension.const_set('UrlCache', Radiant::Config['paginate.url_route'])
@@ -14,10 +16,6 @@ class PollsExtension < Radiant::Extension
     Page.send :include, PollProcess
     Page.send :include, PollPageExtensions
     Page.send :include, ActionView::Helpers::TagHelper  # Required for pagination
-  end
-
-  def deactivate
-    # Not used
   end
 
 end
