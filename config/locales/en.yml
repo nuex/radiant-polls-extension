@@ -1,0 +1,25 @@
+---
+en:
+  polls_action:
+    edit: 'Edit Poll'
+    new: 'New Poll'
+  polls_form:
+    label:
+      title: 'Title'
+      start_date: 'Start Date'
+      options: 'Options'
+      add_option: 'Add Poll Option'
+  polls_index:
+    title: 'Polls'
+    instructions: 'Click on a poll name below to edit it, or click <code>Remove</code> to delete it. If a poll has responses, click the responses value to toggle the view of the results. Poll responses can be cleared by clicking <code>Clear responses</code>.'
+    column:
+      title: 'Title'
+      start_date: 'Start Date'
+      responses: 'Responses'
+    empty: 'You have not created any polls. Click <code>New Poll</code> below to get started.'
+    reset: 'Clear responses'
+    reset_confirm: 'Really clear poll responses?'
+    delete_confirm: 'Really delete this poll?'
+    results: 'Results'
+  polls_controller:
+    responses_cleared: 'Responses for poll "{{poll}}" have been cleared.'

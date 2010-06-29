@@ -4,7 +4,7 @@ class Admin::PollsController < Admin::ResourceController
   def clear_responses
     if @poll = Poll.find(params[:id])
       @poll.clear_responses
-      flash[:notice] = "Poll '#{@poll.title}' responses cleared."
+      flash[:notice] = t('polls_controller.responses_cleared', :poll => @poll.title)
     end
     redirect_to :action => :index
   end

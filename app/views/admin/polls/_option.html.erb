@@ -6,7 +6,7 @@
       <%= f.hidden_field :id, :index => option_id, :name => "#{field_base_name}[id]" %>
       <%= f.hidden_field :should_destroy, :index => option_id, :name => "#{field_base_name}[should_destroy]", :class => 'should_destroy' %>
       <%- unless object.should_destroy? -%>
-        <%= link_to_function "Delete", "delete_option(#{option_id}, 'options')", { :class => 'delete' } %>
+        <%= link_to_function t('remove'), "delete_option(#{option_id}, 'options')", { :class => 'delete' } %>
         <%= f.text_field :title, :index => option_id, :name => "#{field_base_name}[title]", :size => 30 %>
       <%- end -%>
     </p> 

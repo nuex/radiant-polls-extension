@@ -1,27 +1,23 @@
 <% include_stylesheet 'admin/polls' %>
 
-<h1>Polls</h1>
+<h1><%= t('polls_index.title') %></h1>
 
-<p>
-  Click on a poll name below to edit it, or click <code>Remove</code> to delete it.
-  If a poll has responses, click the responses value to toggle the view of the results.
-  Poll responses can be cleared by clicking <code>Clear responses</code>.
-</p>
+<p><%= t('polls_index.instructions') %></p>
 
 <table id="polls" class="index">
   <thead>
     <tr>
-      <th class="title">Title</th>
-      <th class="date">Start Date</th>
-      <th class="responses">Responses</th>
-      <th class="modify" colspan="2">Modify</th>
+      <th class="title"><%= t('polls_index.column.title') %></th>
+      <th class="date"><%= t('polls_index.column.start_date') %></th>
+      <th class="responses"><%= t('polls_index.column.responses') %></th>
+      <th class="modify" colspan="2"><%= t('modify') %></th>
     </tr>
   </thead>
   <tbody>
     <%- if @polls.empty? -%>
       <tr>
         <td class="note" colspan="5">
-          You have not created any polls. Click <code>New Poll</code> below to get started.
+          <%= t('polls_index.empty') %>
         </td>
       </tr>
     <%- else -%>
@@ -45,18 +41,19 @@
           <td class="reset">
             <%# Don't display Clear Responses link if there aren't any responses to clear -%>
             <%- unless poll.options.find(:all, :conditions => ["response_count >= 1"]).empty? -%>
-              <%= link_to(image('polls/reset', :alt => 'Clear responses'), clear_responses_admin_poll_url(poll), :method => :post, :confirm => "Really clear poll responses?") %>
+              <%# link_to(image('polls/reset', :alt => t('polls_index.reset')), clear_responses_admin_poll_url(poll), :method => :post, :confirm => t('polls_index.reset_confirm')) %>
+              <%= link_to(t('polls_index.reset'), clear_responses_admin_poll_url(poll), :method => :post, :confirm => t('polls_index.reset_confirm')) %>
             <%- end -%>
           </td>
           <td class="remove">
-            <%= link_to(image('remove', :alt => 'Remove poll'), admin_poll_url(poll), :method => :delete, :confirm => "Really delete this poll?") %>
+            <%= link_to(t('remove'), admin_poll_url(poll), :method => :delete, :confirm => t('polls_index.delete_confirm')) %>
           </td>
         </tr>
         <%- if poll.response_count > 0 -%>
           <tr>
             <td colspan="5">
               <div id="poll_<%= poll.id %>_results" class="results" style="display: none;">
-                <strong>Results</strong>
+                <strong><%= t('poll_index.results') %></strong>
                 <table>
                   <% poll.options.sort{|a,b| b.response_count <=> a.response_count}.each do |option| %>
                     <tr>
@@ -75,5 +72,5 @@
 </table>
 
 <p>
-  <%= link_to(image('polls/new-poll', :alt => 'New Poll'), new_admin_poll_url) %>
+  <%= link_to(image('polls/new-poll', :alt => t('polls_action.new')), new_admin_poll_url) %>
 </p>

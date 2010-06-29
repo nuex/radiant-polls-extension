@@ -3,22 +3,22 @@
   <div class="form-area">
     <div id="poll_form_area">
       <p class="title">
-        <label for="poll_title">Title</label>
+        <label for="poll_title"><%= t('polls_form.label.title') %></label>
         <%= f.text_field :title %>
       </p>
       <p class="title">
-        <label for="poll_start_date">Start Date</label>
+        <label for="poll_start_date"><%= t('polls_form.label.start_date') %></label>
         <%= f.text_field :start_date, :size => 15 %>
       </p>
       <p class="title">
-        <label for="poll_options" id="options-title">Options</label>
+        <label for="poll_options" id="options-title"><%= t('polls_form.label.options') %></label>
         <div id="options">
           <%- if first_new_form -%>
             <p class="option"><input type="text" name="poll[option_attributes][][title]" size="30" /></p>
           <%- end -%>
           <%= render :partial => 'option', :collection => @poll.options %>
         </div>
-        <p id="add-option"><%= link_to_function("Add Poll Option", "add_option('options');") %></p>
+        <p id="add-option"><%= link_to_function(t('polls_form.label.add_option'), "add_option('options');") %></p>
       </p>
     </div>
   </div>
@@ -28,7 +28,7 @@
   <%- end -%>
   <p class="buttons">
     <%= save_model_button(@poll) %>
-    or
-    <%= link_to('Cancel', admin_polls_url) %>
+    <%= t('or') %>
+    <%= link_to(t('cancel'), admin_polls_url) %>
   </p>
 <%- end -%>

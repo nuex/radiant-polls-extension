@@ -6,6 +6,17 @@
   padding-right: 2em;
   text-align: right;
 }
+#content #polls.index .reset {
+  padding-left: 0;
+  width: 140px;
+}
+#content #polls.index .reset a {
+  background: url("../../images/admin/polls/recycle.png") no-repeat scroll 4px 0 transparent;
+  color: black;
+  font-size: 80%;
+  padding: 0 0 0 20px;
+  text-decoration: none;
+}
 #content #polls.index th.modify {
   text-align: center;
 }

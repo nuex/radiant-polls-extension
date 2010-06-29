@@ -4,6 +4,6 @@
    content_for :page_scripts do %>
      Event.addBehavior({ '#poll_start_date': DateSelector });
 <% end %>
-<h1>New Poll</h1>
+<h1><%= t('polls_action.new') %></h1>
 
 <%= render :partial => 'form' %>
