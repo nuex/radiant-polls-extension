@@ -1,0 +1,187 @@
+---
+en:
+  desc: 
+    poll: "Selects the active poll.
+
+      *Usage*:
+      
+      <pre><code><r:poll [title=\"Poll Title\"]>
+          ...
+      </r:poll></code></pre>"
+    poll-unless_submitted: "Expands inner tags if the poll has not been submitted yet.
+
+      *Usage*:
+      
+      <pre><code><r:poll:unless_submitted>
+          ...
+      </r:poll:unless_submitted></code></pre>"
+    poll-if_submitted: "Expands inner tags if the poll has been yet.
+
+      *Usage*:
+      
+      <pre><code><r:poll:if_submitted>
+          ...
+      </r:poll:if_submitted></code></pre>"
+    poll-title: "Shows the poll title.
+
+      *Usage*:
+      
+      <pre><code><r:poll><r:title /></r:poll></code></pre>"
+    poll-form: "Renders a poll survey form.
+
+      *Usage*:
+      
+      <pre><code><r:poll:form>
+          ...
+      </r:poll:form></code></pre>"
+    poll-options: "Render a collection of options, optionally sorted by @response_count@
+      in @asc@ending, @desc@ending, or @rand@om order. If no order is specified, the
+      result will be in whatever order is returned by the SQL query.
+      
+      *Usage*:
+      
+      <pre><code><r:poll:options [order=\"asc|desc|rand\"]>
+          ...
+      </r:poll:options></code></pre>"
+    poll-options-each: "Iterate through each poll option.
+
+      *Usage:*
+
+      <pre><code><r:poll:options:each>
+          ...
+      </r:poll:options:each></code></pre>"
+    poll-options-each-if_first: "Render inner content if the current contextual option is the first option.
+
+      *Usage:*
+      
+      <pre><code><r:poll:options:each:if_first>
+          ...
+      </r:poll:options:each:if_first></code></pre>"
+    poll-options-each-if_last: "Render inner content if the current contextual option is the last option.
+
+      *Usage:*
+      
+      <pre><code><r:poll:options:each:if_last>
+          ...
+      </r:poll:options:each:if_last></code></pre>"
+    poll-options-each-unless_first: "Render inner content unless the current contextual option is the first option.
+
+      *Usage:*
+      
+      <pre><code><r:poll:options:each:unless_first>
+          ...
+      </r:poll:options:each:unless_first></code></pre>"
+    poll-options-each-unless_last: "Render inner content unless the current contextual option is the last option.
+
+      *Usage:*
+      
+      <pre><code><r:poll:options:each:unless_last>
+          ...
+      </r:poll:options:each:unless_last></code></pre>"
+    poll-options-input: "Show the poll option radio button input type.
+
+      *Usage:*
+      
+      <pre><code><r:poll:form>
+        <r:options:each>
+          <r:input />
+        </r:options:each>
+      </r:poll:form></code></pre>"
+    poll-options-title: "Show the poll option title.
+
+      *Usage:*
+      
+      <pre><code><r:poll:form>
+        <r:options:each>
+          <r:title />
+        </r:options:each>
+      </r:poll:form></code></pre>"
+    poll-submit: "Show a poll form submit button.
+      The optional @value@ attribute may be specified to override the default
+      button label.
+
+      *Usage:*
+      
+      <pre><code><r:poll:form>
+        <r:options:each>
+          <r:input /><r:title />
+        </r:options:each>
+        <r:submit [value=\"Go!\"] />
+      </r:poll:form></code></pre>"
+    poll-options-percent_responses: "Show the percentage of responses for an option.
+
+      *Usage:*
+
+      <pre><code><r:poll:options:each>
+        <r:title /> <r:percent_responses />
+      </r:poll:options:each></code</pre>"
+    poll-options-number_responded: "Show the number of responses for an option.
+
+      *Usage:*
+
+      <pre><code><r:poll:options:each>
+        <r:title /> <r:number_responded />
+      </r:poll:options:each></code</pre>"
+    poll-total_responses: "Show the total number of visitors that responded.
+
+      *Usage:*
+
+      <pre><code><r:poll:total_responses /></code></pre>"
+    polls: "Selects all polls.
+
+      By default, polls are sorted in ascending order by title and limited to
+      10 per page; the current poll and any future polls are excluded. To
+      include the current poll, set @show_current@ to @true@. Any polls where
+      @attribute@ is null are also excluded, so if you have a set of polls that
+      include polls that do not have a defined start date, then when @by@ is set
+      to @start_date@, only those polls with start dates will be shown.
+
+      *Usage:*
+
+      <pre><code><r:polls [per_page=\"count\"] [by=\"attribute\"]
+       [order=\"asc|desc\"] [show_current=\"true|false\"] /></code></pre>"
+    polls-each: "Loops through each poll and renders the contents.
+
+      *Usage:*
+
+      <pre><code><r:polls:each>
+          ...
+      </r:polls:each></code></pre>"
+    polls-each-poll: "Creates context for a single poll.
+
+      *Usage:*
+
+      <pre><code><r:polls:each:poll>
+          ...
+      </r:polls:each:poll></code></pre>"
+    polls-pages: "Renders pagination links with will_paginate.
+      The following optional attributes may be controlled:
+
+      <ul>
+        <li>@id@ the id to apply to the containing div</li>
+        <li>@class@ the class to apply to the containing div (default is \"pagination\")</li>
+        <li>@previous_label@ override the default of \"&laquo; Previous\"</li>
+        <li>@next_label@ override the default of \"Next &raquo;\"</li>
+        <li>@inner_window@ the number of pagination links shown around the current page (default is 4)</li>
+        <li>@outer_window@ the number of pagination links shown around the first and last page links (default is 1)</li>
+        <li>@separator@ the string separator for page HTML elements (default is a single space)</li>
+        <li>@page_links@ if false, only previous/next links are rendered (default is true)</li>
+        <li>@container@ if false, pagination links are not wrapped in a containing div (default is true)</li>
+      </ul>
+
+      *Usage:*
+
+      <pre><code><r:polls>
+        <r:each:poll>
+          ...
+        </r:each:poll>
+        <r:pages [id=\"\"]
+                 [class=\"pagination\"]
+                 [previous_label=\"&laquo; Previous\"]
+                 [next_label=\"Next &raquo;\"]
+                 [inner_window=\"4\"]
+                 [outer_window=\"1\"]
+                 [separator=\" \"]
+                 [page_links=\"true\"]
+                 [container=\"true\" />
+      </r:polls></code></pre>"
