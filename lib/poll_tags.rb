@@ -52,7 +52,7 @@ module PollTags
     Expands inner tags if the poll has not been submitted yet.
 
     *Usage:*
-    <pre><code><r:poll:unless_submitted title="My Poll">...</r:poll:unless_submitted></code></pre>
+    <pre><code><r:poll:unless_submitted>...</r:poll:unless_submitted></code></pre>
 
   }
   tag 'poll:unless_submitted' do |tag|
@@ -65,7 +65,7 @@ module PollTags
     Expands inner tags if the poll has been submitted.
 
     *Usage:*
-    <pre><code><r:poll:unless_submitted title="My Poll">...</r:poll:unless_submitted></code></pre>
+    <pre><code><r:poll:if_submitted>...</r:poll:if_submitted></code></pre>
 
   }
   tag 'poll:if_submitted' do |tag|
@@ -88,7 +88,7 @@ module PollTags
     Renders a poll survey form.
 
     *Usage:*
-    <pre><code><r:poll title="My Poll"><r:form>...</r:form></r:poll></pre></code>
+    <pre><code><r:poll [title="My Poll"]><r:form>...</r:form></r:poll></code></pre>
   }
   tag 'poll:form' do |tag|
     options = tag.attr.dup
@@ -110,7 +110,7 @@ module PollTags
     the result will be in whatever order is returned by the SQL query.
 
     *Usage:*
-    <pre><code><r:options [order="asc|desc|rand"]>...</r:options></code></pre>
+    <pre><code><r:poll:options [order="asc|desc|rand"]>...</r:poll:options></code></pre>
   }
   tag 'poll:options' do |tag|
     tag.locals.sort_order = case tag.attr['order']
@@ -130,7 +130,7 @@ module PollTags
     Iterate through each poll option.
 
     *Usage:*
-    <pre><code><r:options:each>...</r:options:each></code></pre>
+    <pre><code><r:poll:options:each>...</r:poll:options:each></code></pre>
   }
   tag 'poll:options:each' do |tag|
     result = []
@@ -146,7 +146,7 @@ module PollTags
     Render inner content if the current contextual option is the first option.
 
     *Usage:*
-    <pre><code><r:options:each:if_first>...</r:options:each:if_first></code></pre>
+    <pre><code><r:poll:options:each:if_first>...</r:poll:options:each:if_first></code></pre>
   }
   tag 'poll:options:each:if_first' do |tag|
     options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
@@ -159,7 +159,7 @@ module PollTags
     Render inner content if the current contextual option is the last option.
 
     *Usage:*
-    <pre><code><r:options:each:if_last>...</r:options:each:if_last></code></pre>
+    <pre><code><r:poll:options:each:if_last>...</r:poll:options:each:if_last></code></pre>
   }
   tag 'poll:options:each:if_last' do |tag|
     options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
@@ -172,7 +172,7 @@ module PollTags
     Render inner content unless the current contextual option is the first option.
 
     *Usage:*
-    <pre><code><r:options:each:unless_first>...</r:options:each:unless_first></code></pre>
+    <pre><code><r:poll:options:each:unless_first>...</r:poll:options:each:unless_first></code></pre>
   }
   tag 'poll:options:each:unless_first' do |tag|
     options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
@@ -185,7 +185,7 @@ module PollTags
     Render inner content unless the current contextual option is the last option.
 
     *Usage:*
-    <pre><code><r:options:each:unless_last>...</r:options:each:unless_last></code></pre>
+    <pre><code><r:poll:options:each:unless_last>...</r:poll:options:each:unless_last></code></pre>
   }
   tag 'poll:options:each:unless_last' do |tag|
     options = tag.locals.sort_order.nil? ? tag.locals.poll.options : tag.locals.poll.options.sort(&tag.locals.sort_order)
@@ -198,7 +198,7 @@ module PollTags
     Show the poll option radio button input type.
 
     *Usage:*
-    <pre><code><r:poll:form title="My Poll"><r:form><r:options:each><r:input /><r:title /></r:options:each></r:poll:form></code></pre>
+    <pre><code><r:poll:form><r:options:each><r:input /><r:title /></r:options:each></r:poll:form></code></pre>
   }
   tag 'poll:options:input' do |tag|
     option = tag.locals.option
@@ -209,7 +209,7 @@ module PollTags
     Show the poll option title.
 
     *Usage:*
-    <pre><code><r:poll:form title="My Poll"><r:options:each><r:title /></r:options:each></r:poll:form></code></pre>
+    <pre><code><r:poll:options:each><r:title /></r:poll:options:each></code></pre>
   }
   tag 'poll:options:title' do |tag|
     tag.locals.option.title
@@ -219,7 +219,7 @@ module PollTags
     Show a poll form submit button.
 
     *Usage:*
-    <pre><code><r:poll:form title="My Poll"><r:options:each><r:input /><r:text /></r:options:each><r:submit [value="Go!"] /></r:poll:form></code></pre>
+    <pre><code><r:poll:form><r:options:each><r:input /><r:title /></r:options:each><r:submit [value="Go!"] /></r:poll:form></code></pre>
   }
   tag 'poll:submit' do |tag|
     value = tag.attr['value'] || 'Submit'
@@ -230,7 +230,7 @@ module PollTags
     Show percentage of responses for a particular option.
 
     *Usage:*
-    <pre><code><r:poll title="My Poll"><r:options:each><r:title /> <r:percent_responses /></r:options:each></r:poll></code></pre>
+    <pre><code><r:poll:options:each><r:title /> <r:percent_responses /></r:poll:options:each></code></pre>
   }
   tag 'options:percent_responses' do |tag|
     tag.locals.option.response_percentage
@@ -240,7 +240,7 @@ module PollTags
     Show count of responses for a particular option.
 
     *Usage:*
-    <pre><code><r:poll title="My Poll"><r:options:each><r:title /> <r:number_responded /></r:options:each></r:poll></code></pre>
+    <pre><code><r:poll:options:each><r:title /> <r:number_responded /></r:poll:options:each></code></pre>
   }
   tag 'options:number_responses' do |tag|
     tag.locals.option.response_count
@@ -250,7 +250,7 @@ module PollTags
     Show total number of visitors that responded.
 
     *Usage:*
-    <pre><code><r:poll title="My Poll"><r:total_responded /></r:poll></code></pre>
+    <pre><code><r:poll:total_responses /></code></pre>
   }
   tag 'poll:total_responses' do |tag|
     tag.locals.poll.response_count
@@ -267,14 +267,14 @@ module PollTags
   desc %{
     Selects all polls.
 
-    *Usage:*
-    <pre><code><r:polls [per_page="10"] [by="attribute"] [order="asc|desc"] [show_current="true|false"] /></code></pre>
-
     By default, polls are sorted in ascending order by title and limited to 10 per page;
     the current poll and any future polls are excluded. To include the current poll, set
-    show_current = "true". Any polls where `attribute` is null are also excluded, so if
+    show_current = "true". Any polls where @attribute@ is null are also excluded, so if
     you have a set of polls that include polls that do not have a defined start date, then
-    when specifying `by="start_date"` only those polls with start dates will be shown.
+    when specifying @by="start_date"@ only those polls with start dates will be shown.
+
+    *Usage:*
+    <pre><code><r:polls [per_page="10"] [by="attribute"] [order="asc|desc"] [show_current="true|false"] /></code></pre>
   }
   tag 'polls' do |tag|
     if Poll.count > 0
@@ -289,6 +289,9 @@ module PollTags
 
   desc %{
     Loops through each poll and renders the contents.
+
+    *Usage:*
+    <pre><code><r:polls:each>...</r:polls:each></code></pre>
   }
   tag 'polls:each' do |tag|
     result = []
@@ -303,6 +306,9 @@ module PollTags
 
   desc %{
     Creates the context for a single poll.
+
+    *Usage:*
+    <pre><code><r:polls:each:poll>...</r:polls:each:poll></code></pre>
   }
   tag 'polls:each:poll' do |tag|
     tag.expand
@@ -329,8 +335,7 @@ module PollTags
       <r:pages [id=""] [class="pagination"] [previous_label="&laquo; Previous"]
       [next_label="Next &raquo;"] [inner_window="4"] [outer_window="1"]
       [separator=" "] [page_links="true"] [container="true"]/>
-    </r:paginate>
-    </code></pre>
+    </r:polls></code></pre>
   }
   tag 'polls:pages' do |tag|
     renderer = RadiantLinkRenderer.new(tag)
