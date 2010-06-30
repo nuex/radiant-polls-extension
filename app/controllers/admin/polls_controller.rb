@@ -13,7 +13,7 @@ class Admin::PollsController < Admin::ResourceController
 
     def load_models
       # Order polls by descending date, then alphabetically by title
-      self.models = model_class.all(:order => "COALESCE(start_date, '1900-01-01') DESC, title")
+      self.models = model_class.all(:order => Poll.send(:sanitize_sql_array, [ "COALESCE(start_date, ?) DESC, title", Date.new(1900, 1, 1) ]))
     end
 
 end
