@@ -66,6 +66,18 @@ Poll "archives" can also be listed, using pagination via the will_paginate plugi
     <r:pages />
   </r:polls>
 
+== Note and Caveats
+
+  If you are using the Oracle Enhance Adapter, you may want to add this to your environment.rb,
+  in the after_initialize block:
+
+  # By default, OracleEnhancedAdapter typecasts all columns of type DATE to Time or DateTime.
+  # This will force DATE values with hour, min and secs equal to 0 to be typecasted to Date.
+  ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter.emulate_dates = true
+  # The above can obviously cause problems, therefore this is to be preferred,
+  # since it will typecast to DATE, only columns with “date” in their name (e.g. “creation_date“)
+  ActiveRecord::ConnectionAdapters::OracleEnhancedAdapter.emulate_dates_by_column_name = true
+
 == Acknowledgements
 
 Thanks to David Coto (http://github.com/davec) for the many enhancements and specs.
