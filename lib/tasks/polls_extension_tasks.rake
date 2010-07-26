@@ -25,7 +25,7 @@ namespace :radiant do
           cp file, RAILS_ROOT + path, :verbose => false
         end
 
-        unless PollsExtension.starts_with? RAILS_ROOT # don't need to copy vendored tasks
+        unless PollsExtension.root.starts_with? RAILS_ROOT # don't need to copy vendored tasks
           puts "Copying rake tasks from PollsExtension"
           local_tasks_path = File.join(RAILS_ROOT, %w(lib tasks))
           mkdir_p local_tasks_path, :verbose => false
